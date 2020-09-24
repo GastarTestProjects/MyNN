@@ -1,4 +1,4 @@
-package org.xe72.nnet
+package org.xe72.nets.custom
 
 class Neuron() {
     var value = 0.0

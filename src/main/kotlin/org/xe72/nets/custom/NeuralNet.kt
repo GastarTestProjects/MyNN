@@ -1,10 +1,11 @@
-package org.xe72.nnet
+package org.xe72.nets.custom
 
+import org.xe72.nets.INeuralNet
 import kotlin.math.exp
 
 // Теоретическая часть: http://neuralnetworksanddeeplearning.com/chap1.html
 // Для реализаии использовал статью: https://mattmazur.com/2015/03/17/a-step-by-step-backpropagation-example/
-class NeuralNet(val learningRate: Double, vararg neuronsOnLayerCounts: Int) {
+class NeuralNet(val learningRate: Double, vararg neuronsOnLayerCounts: Int): INeuralNet {
 
     // Может сделать mutable?
     var layers: List<Layer>
@@ -25,7 +26,7 @@ class NeuralNet(val learningRate: Double, vararg neuronsOnLayerCounts: Int) {
      * Закинуть данные для обучения. Входные и ожидаемые выходные
      */
     // TODO: Добавить проверки на значения и их количество
-    fun feedLearningData(inputs: List<Double>, targetOutputs: List<Double>) {
+    override fun feedLearningData(inputs: List<Double>, targetOutputs: List<Double>) {
         feedForward(inputs)
         backpropagation(targetOutputs)
     }
@@ -34,7 +35,7 @@ class NeuralNet(val learningRate: Double, vararg neuronsOnLayerCounts: Int) {
      * ВВод входных данных и получение выходных
      */
     // TODO: Добавить проверки на значения и их количество
-    fun feedForward(inputs: List<Double>): List<Double> {
+    override fun feedForward(inputs: List<Double>): List<Double> {
         layers[0].neurons.forEachIndexed { index, neuron -> neuron.value = inputs[index] }
         layers.slice(1 until layers.size).forEach { layer ->
             layer.neurons.forEach { neuron ->
@@ -81,6 +82,7 @@ class NeuralNet(val learningRate: Double, vararg neuronsOnLayerCounts: Int) {
         }
     }
 
+    // TODO: Вынести в интерфейс?
     fun printCurrentNetState() {
         layers.forEach { layer ->
             println(layer.neurons.map { it.value })

@@ -1,4 +1,4 @@
-package org.xe72.nnet
+package org.xe72.nets.custom
 
 import kotlin.random.Random
 

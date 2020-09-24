@@ -1,6 +1,7 @@
 package org.xe72.view
 
-import org.xe72.nnet.NeuralNet
+import org.xe72.nets.INeuralNet
+import org.xe72.nets.custom.NeuralNet
 import java.awt.Color
 import java.awt.Graphics
 import java.awt.event.MouseEvent
@@ -14,13 +15,13 @@ import javax.swing.JLabel
 /**
  * Практически не менял. Взял тут: https://github.com/Elco-/SimpleNN
  */
-class FormDots : JFrame(), Runnable, MouseListener {
+class FormDots(val nn: INeuralNet) : JFrame(), Runnable, MouseListener {
     private val w = 1280
     private val h = 720
     private val img = BufferedImage(w, h, BufferedImage.TYPE_INT_RGB)
     private val pimg = BufferedImage(w / 8, h / 8, BufferedImage.TYPE_INT_RGB)
     private var frame = 0
-    private val nn: NeuralNet
+//    private val nn: NeuralNet
     var points: MutableList<CustomPoint> = ArrayList()
 
     var shouldRecalculate = true
@@ -29,7 +30,7 @@ class FormDots : JFrame(), Runnable, MouseListener {
 //        val sigmoid =
 //            UnaryOperator { x: Double? -> 1 / (1 + Math.exp(-x!!)) }
 //        val dsigmoid = UnaryOperator { y: Double -> y * (1 - y) }
-        nn = NeuralNet(0.05, 2, 5, 5, 5, 2)
+//        nn = NeuralNet(0.05, 2, 5, 5, 5, 2)
         this.setSize(w + 16, h + 38)
         this.isVisible = true
         defaultCloseOperation = EXIT_ON_CLOSE
@@ -49,7 +50,7 @@ class FormDots : JFrame(), Runnable, MouseListener {
 
     override fun paint(g: Graphics) {
         if (points.size > 0) {
-            for (k in 0 until 10000) {
+            for (k in 0 until 1000) {
                 val p = points[(Math.random() * points.size).toInt()]
                 val nx = p.x.toDouble() / w
                 val ny = p.y.toDouble() / h
