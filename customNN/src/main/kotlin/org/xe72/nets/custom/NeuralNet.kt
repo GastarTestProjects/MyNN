@@ -5,7 +5,7 @@ import kotlin.math.exp
 
 // Теоретическая часть: http://neuralnetworksanddeeplearning.com/chap1.html
 // Для реализаии использовал статью: https://mattmazur.com/2015/03/17/a-step-by-step-backpropagation-example/
-class NeuralNet(val learningRate: Double, vararg neuronsOnLayerCounts: Int): INeuralNet {
+class NeuralNet(val learningRate: Double, vararg neuronsOnLayerCounts: Int) : INeuralNet {
 
     // Может сделать mutable?
     var layers: List<Layer>
@@ -27,7 +27,7 @@ class NeuralNet(val learningRate: Double, vararg neuronsOnLayerCounts: Int): INe
      */
     // TODO: Добавить проверки на значения и их количество
     override fun feedLearningData(inputs: List<Double>, targetOutputs: List<Double>) {
-        feedForward(inputs)
+        feedForward(listOf(inputs)) // TODO: Переделать входные параметры на List<List<Double>>
         backpropagation(targetOutputs)
     }
 
@@ -35,14 +35,19 @@ class NeuralNet(val learningRate: Double, vararg neuronsOnLayerCounts: Int): INe
      * ВВод входных данных и получение выходных
      */
     // TODO: Добавить проверки на значения и их количество
-    override fun feedForward(inputs: List<Double>): List<Double> {
-        layers[0].neurons.forEachIndexed { index, neuron -> neuron.value = inputs[index] }
-        layers.slice(1 until layers.size).forEach { layer ->
-            layer.neurons.forEach { neuron ->
-                neuron.value = sigmoid(neuron.prevNeurons.map { it.key.value * it.value }.sum())
+    override fun feedForward(inputs: List<List<Double>>): List<List<Double>> {
+        val result = mutableListOf<List<Double>>()
+        inputs.forEach { currentInputs ->
+            layers[0].neurons.forEachIndexed { index, neuron -> neuron.value = currentInputs[index] }
+            layers.slice(1 until layers.size).forEach { layer ->
+                layer.neurons.forEach { neuron ->
+                    neuron.value = sigmoid(neuron.prevNeurons.map { it.key.value * it.value }.sum())
+                }
             }
+            result.add(layers.last().neurons.map { it.value })
         }
-        return layers.last().neurons.map { it.value }
+
+        return result
     }
 
     /**

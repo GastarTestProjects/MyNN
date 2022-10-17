@@ -1,7 +1,6 @@
 package org.xe72.view
 
 import org.xe72.nets.INeuralNet
-import org.xe72.nets.custom.NeuralNet
 import java.awt.Color
 import java.awt.Graphics
 import java.awt.event.MouseEvent
@@ -21,7 +20,8 @@ class FormDots(val nn: INeuralNet) : JFrame(), Runnable, MouseListener {
     private val img = BufferedImage(w, h, BufferedImage.TYPE_INT_RGB)
     private val pimg = BufferedImage(w / 8, h / 8, BufferedImage.TYPE_INT_RGB)
     private var frame = 0
-//    private val nn: NeuralNet
+
+    //    private val nn: NeuralNet
     var points: MutableList<CustomPoint> = ArrayList()
 
     var shouldRecalculate = true
@@ -42,7 +42,7 @@ class FormDots(val nn: INeuralNet) : JFrame(), Runnable, MouseListener {
     override fun run() {
         while (true) {
 //            if (shouldRecalculate) {
-                this.repaint()
+            this.repaint()
 //            }
             //            try { Thread.sleep(17); } catch (InterruptedException e) {}
         }
@@ -50,7 +50,7 @@ class FormDots(val nn: INeuralNet) : JFrame(), Runnable, MouseListener {
 
     override fun paint(g: Graphics) {
         if (points.size > 0) {
-            for (k in 0 until 1000) {
+            for (k in 0 until 100) {
                 val p = points[(Math.random() * points.size).toInt()]
                 val nx = p.x.toDouble() / w
                 val ny = p.y.toDouble() / h
@@ -62,13 +62,22 @@ class FormDots(val nn: INeuralNet) : JFrame(), Runnable, MouseListener {
                 nn.feedLearningData(listOf(nx, ny), listOf(*targets))
             }
         }
+
+        val netInputMatrix = mutableListOf<List<Double>>()
         for (i in 0 until w / 8) {
             for (j in 0 until h / 8) {
                 val nx = i.toDouble() / w * 8
                 val ny = j.toDouble() / h * 8
-                val outputs = nn.feedForward(listOf(nx, ny))
+                netInputMatrix.add(listOf(nx, ny))
+            }
+        }
+        val outputs = nn.feedForward(netInputMatrix)
+
+        for (i in 0 until w / 8) {
+            for (j in 0 until h / 8) {
+                val currentOutput = outputs[i * (h/8) + j]
                 var green =
-                    Math.max(0.0, Math.min(1.0, outputs[0] - outputs[1] + 0.5))
+                    Math.max(0.0, Math.min(1.0, currentOutput[0] - currentOutput[1] + 0.5))
                 var blue = 1 - green
                 green = 0.3 + green * 0.5
                 blue = 0.5 + blue * 0.5
@@ -76,6 +85,7 @@ class FormDots(val nn: INeuralNet) : JFrame(), Runnable, MouseListener {
                 pimg.setRGB(i, j, color)
             }
         }
+
         val ig = img.graphics
         ig.drawImage(pimg, 0, 0, w, h, this)
         for (p in points) {

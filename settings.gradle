@@ -1,2 +1,4 @@
 rootProject.name = 'MyNN'
 
+include 'customNN', 'deepLearningNet', 'dotsClassifier', 'simpleCreature'
+

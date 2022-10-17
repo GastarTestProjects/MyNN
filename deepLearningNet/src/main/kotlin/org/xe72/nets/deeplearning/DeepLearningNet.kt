@@ -1,10 +1,6 @@
 package org.xe72.nets.deeplearning
 
-import org.datavec.api.records.reader.RecordReader
 import org.deeplearning4j.datasets.iterator.DoublesDataSetIterator
-import org.deeplearning4j.datasets.iterator.impl.EmnistDataSetIterator
-import org.deeplearning4j.datasets.iterator.impl.IrisDataSetIterator
-import org.deeplearning4j.datasets.iterator.impl.ListDataSetIterator
 import org.deeplearning4j.nn.api.OptimizationAlgorithm
 import org.deeplearning4j.nn.conf.NeuralNetConfiguration
 import org.deeplearning4j.nn.conf.layers.DenseLayer
@@ -14,9 +10,6 @@ import org.deeplearning4j.nn.weights.WeightInit
 import org.deeplearning4j.optimize.listeners.ScoreIterationListener
 import org.nd4j.common.primitives.Pair
 import org.nd4j.linalg.activations.Activation
-import org.nd4j.linalg.cpu.nativecpu.NDArray
-import org.nd4j.linalg.dataset.DataSet
-import org.nd4j.linalg.dataset.api.iterator.DataSetIterator
 import org.nd4j.linalg.learning.config.AdaGrad
 import org.nd4j.linalg.lossfunctions.LossFunctions
 import org.xe72.nets.INeuralNet
@@ -86,10 +79,12 @@ class DeepLearningNet : INeuralNet {
         model.fit(dataSetIterator)
     }
 
-    override fun feedForward(inputs: List<Double>): List<Double> {
+    override fun feedForward(inputs: List<List<Double>>): List<List<Double>> {
+        val dataset = inputs.map { Pair(it.toDoubleArray(), doubleArrayOf()) }.toMutableList()
         val dataSetIterator =
-            DoublesDataSetIterator(mutableListOf(Pair(inputs.toDoubleArray(), doubleArrayOf())), 1)
+            DoublesDataSetIterator(dataset, 90)
         val output = model.output(dataSetIterator)
-        return listOf(output.getDouble(0), output.getDouble(1))
+//        return listOf(output.getDouble(0), output.getDouble(1))
+        return output.toDoubleMatrix().map { it.toList() }.toList()
     }
 }

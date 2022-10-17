@@ -10,6 +10,10 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/customNN" />
+            <option value="$PROJECT_DIR$/deepLearningNet" />
+            <option value="$PROJECT_DIR$/dotsClassifier" />
+            <option value="$PROJECT_DIR$/simpleCreature" />
           </set>
         </option>
         <option name="useQualifiedModuleNames" value="true" />
